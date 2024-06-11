@@ -18,8 +18,12 @@ from linebot.v3.messaging import (
     ApiClient,
     MessagingApi,
     ReplyMessageRequest,
-    TextMessage
+    TextMessage,
+    FlexMessage
 )
+
+
+from linebot.models import FlexSendMessage, BubbleContainer
 
 from dotenv import load_dotenv
 
@@ -68,19 +72,100 @@ def callback():
 def message_text(event):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text=event.message.text)]
+        flex_message = {
+            "type": "flex",
+            "altText":"test", #alt_text
+            "contents": {
+                "type": "bubble",
+                "hero": {
+                    "type": "image",
+                    "url": "https://developers-resource.landpress.line.me/fx/img/01_1_cafe.png",
+                    "size": "full",
+                    "aspectRatio": "20:13",
+                    "aspectMode": "cover",
+                    "action": {
+                    "type": "uri",
+                    "uri": "https://line.me/"
+                    }
+                },
+                "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                    {
+                        "type": "text",
+                        "text": "COC Clock",
+                        "weight": "bold",
+                        "size": "xl"
+                    },
+                    {
+                        "type": "box",
+                        "layout": "vertical",
+                        "margin": "lg",
+                        "spacing": "sm",
+                        "contents": []
+                    }
+                    ]
+                },
+                "footer": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "spacing": "sm",
+                    "contents": [
+                    {
+                        "type": "button",
+                        "style": "link",
+                        "height": "sm",
+                        "action": {
+                        "type": "uri",
+                        "label": "CALL",
+                        "uri": "https://line.me/"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "style": "link",
+                        "height": "sm",
+                        "action": {
+                        "type": "uri",
+                        "label": "WEBSITE",
+                        "uri": "https://line.me/"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "uri",
+                        "label": "Setting",
+                        "uri": "http://linecorp.com/"
+                        },
+                        "height": "sm"
+                    }
+                    ],
+                    "flex": 0
+                }
+            }
+        }
+        print(event.message.text)
+        if event.message.text.strip() == "clock":
+            line_bot_api.reply_message(ReplyMessageRequest(
+                reply_token = event.reply_token, 
+                messages=[FlexMessage.from_dict(flex_message)]
+            ))
+        else:
+            line_bot_api.reply_message_with_http_info(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[TextMessage(text=event.message.text)]
+                )
             )
-        )
 
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
     )
-    arg_parser.add_argument('-p', '--port', default=5000, help='port')
+    arg_parser.add_argument('-p', '--port', default=port, help='port')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
     app.run(debug=options.debug, port=options.port)
