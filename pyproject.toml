@@ -10,6 +10,10 @@ python = "^3.12"
 flask = "^3.0.3"
 line-bot-sdk = "^3.11.0"
 python-dotenv = "^1.0.1"
+sqlalchemy = "^2.0.30"
+flask-sqlalchemy = "^3.1.1"
+flask-migrate = "^4.0.7"
+pymysql = "^1.1.1"
 
 
 [build-system]
