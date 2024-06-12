@@ -5,9 +5,25 @@ from sqlalchemy import pool
 
 from alembic import context
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
+
+#####################################################################################################################
 config = context.config
+mysql_user = os.environ.get("ALEMBIC_USER")
+mysql_password = os.environ.get("ALEMBIC_PASSWORD")
+mysql_server = os.environ.get("ALEMBIC_SERVER")
+mysql_db = os.environ.get("ALEMBIC_DB")
+mysql_port = os.environ.get("ALEMBIC_PORT")
+mysql_dsn = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_server}:{mysql_port}/{mysql_db}'
+# postgres_dsn = f'postgresql+psycopg2://{postgres_user}:{postgres_password}@{postgres_server}/{postgres_db}'
+config = context.config
+config.set_main_option('sqlalchemy.url', mysql_dsn)
+#####################################################################################################################
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
