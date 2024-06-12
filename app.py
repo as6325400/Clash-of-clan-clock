@@ -26,6 +26,7 @@ from linebot.v3.messaging import (
 from linebot.models import FlexSendMessage, BubbleContainer
 
 from dotenv import load_dotenv
+from src import flex
 
 load_dotenv()
 
@@ -72,80 +73,7 @@ def callback():
 def message_text(event):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        flex_message = {
-            "type": "flex",
-            "altText":"test", #alt_text
-            "contents": {
-                "type": "bubble",
-                "hero": {
-                    "type": "image",
-                    "url": "https://developers-resource.landpress.line.me/fx/img/01_1_cafe.png",
-                    "size": "full",
-                    "aspectRatio": "20:13",
-                    "aspectMode": "cover",
-                    "action": {
-                    "type": "uri",
-                    "uri": "https://line.me/"
-                    }
-                },
-                "body": {
-                    "type": "box",
-                    "layout": "vertical",
-                    "contents": [
-                    {
-                        "type": "text",
-                        "text": "COC Clock",
-                        "weight": "bold",
-                        "size": "xl"
-                    },
-                    {
-                        "type": "box",
-                        "layout": "vertical",
-                        "margin": "lg",
-                        "spacing": "sm",
-                        "contents": []
-                    }
-                    ]
-                },
-                "footer": {
-                    "type": "box",
-                    "layout": "vertical",
-                    "spacing": "sm",
-                    "contents": [
-                    {
-                        "type": "button",
-                        "style": "link",
-                        "height": "sm",
-                        "action": {
-                        "type": "uri",
-                        "label": "CALL",
-                        "uri": "https://line.me/"
-                        }
-                    },
-                    {
-                        "type": "button",
-                        "style": "link",
-                        "height": "sm",
-                        "action": {
-                        "type": "uri",
-                        "label": "WEBSITE",
-                        "uri": "https://line.me/"
-                        }
-                    },
-                    {
-                        "type": "button",
-                        "action": {
-                        "type": "uri",
-                        "label": "Setting",
-                        "uri": "http://linecorp.com/"
-                        },
-                        "height": "sm"
-                    }
-                    ],
-                    "flex": 0
-                }
-            }
-        }
+        flex_message = flex.flex_message
         print(event.message.text)
         if event.message.text.strip() == "clock":
             line_bot_api.reply_message(ReplyMessageRequest(
