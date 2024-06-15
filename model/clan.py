@@ -114,5 +114,46 @@ class Clan():
         except Exception as e:
             sys.stderr.write(f"An unexpected error occurred: {e}\n")
     
+    def clan_war_not_end(self):
+        url = f"{self.base_request_url}{self.tag}/currentwar"
+        try:
+            response = requests.get(url, headers=self.headers)
+            response.raise_for_status()
+            if(response.status_code == 200):
+                data = response.json()
+                
+                inform = {
+                    "state": data["state"],
+                    "member_list": []
+                }
+                
+                if data["state"] != "inWar":
+                    return inform
+                
+                for member in data['clan']['members']:
+                    if member.get("attacks"):
+                        
+                        if len(member["attacks"]) >= 2:
+                            continue
+                        
+                        inform["member_list"].append({
+                            "name": member["name"],
+                            "tag": member["tag"],
+                            "attack_times": int(len(member["attacks"])),
+                        })
+                        
+                    else:
+                        inform["member_list"].append({
+                            "name": member["name"],
+                            "tag": member["tag"],
+                            "attack_times": 0,
+                        })
+                return inform
+            
+            else:
+                return None
+        except Exception as e:
+            sys.stderr.write(f"An unexpected error occurred: {e}\n")
+    
             
     

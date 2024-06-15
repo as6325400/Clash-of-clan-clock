@@ -24,9 +24,9 @@ flex_message = {
                     "style": "link",
                     "height": "sm",
                     "action": {
-                        "type": "uri",
+                        "type": "postback",
                         "label": "War",
-                        "uri": "https://line.me/"
+                        "data": "action=War"
                     }
                 },
                 {

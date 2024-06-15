@@ -99,10 +99,10 @@ def handle_message(event: PostbackEvent):
         clan = Clan("#9LY9RLRL")
         res = event.postback.data
         user = line_bot_api.get_profile(event.source.user_id)
+        reply_text = f"{user.display_name} 查詢\n\n"
         if res == "action=Capital_not_end":
             print("Capital_not_end")
             data = clan.clan_capital_not_end()
-            reply_text = f"{user.display_name} 查詢\n\n"
             reply_text += f"突襲{data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']}個名額\n"
             count = 1
             for i in data["member_list"]:
@@ -116,7 +116,6 @@ def handle_message(event: PostbackEvent):
             ))
         elif res == "action=Capital_not_start":
             data = clan.clan_capital_not_start()
-            reply_text = f"{user.display_name} 查詢\n\n"
             reply_text += f"突襲{data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']}個名額\n"
             reply_text += "尚未打突襲的成員有：\n"
             count = 1
@@ -125,6 +124,21 @@ def handle_message(event: PostbackEvent):
                 reply_text += f"{count}. {i['name']}\n"
                 count += 1
             
+            line_bot_api.reply_message(ReplyMessageRequest(
+                reply_token = event.reply_token, 
+                messages=[TextMessage(text=reply_text)]
+            ))
+            
+        elif res == "action=War":
+            data = clan.clan_war_not_end()
+            if data["state"] != "inWar":
+                reply_text += "目前沒有打戰\n"
+            else:
+                reply_text += "尚未打戰的成員有：\n"
+                count = 1
+                for i in data["member_list"]:
+                    reply_text += f"{count}. {i['name']} {i['attack_times']}/2\n"
+                    count += 1
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text=reply_text)]
