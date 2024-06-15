@@ -15,6 +15,7 @@ flask-sqlalchemy = "^3.1.1"
 flask-migrate = "^4.0.7"
 pymysql = "^1.1.1"
 cryptography = "^42.0.8"
+pytz = "^2024.1"
 
 
 [build-system]
