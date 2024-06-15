@@ -13,6 +13,7 @@ from linebot.v3.webhooks import (
     MessageEvent,
     TextMessageContent,
     PostbackEvent,
+    JoinEvent
 )
 from linebot.v3.messaging import (
     Configuration,
@@ -27,7 +28,7 @@ from linebot.v3.messaging import (
 from linebot.models import FlexSendMessage, BubbleContainer
 
 from dotenv import load_dotenv
-from src import flex
+from src import flex, setting
 from model.clan import Clan
 from model.db import DB
 
@@ -130,22 +131,35 @@ def message_text(event: MessageEvent):
 def handle_message(event: PostbackEvent):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        griup_id = event.source.group_id
-        db = DB()
-        clan_id = db.get_clan_by_group_id(griup_id)
-        db.close()
         
+        res = event.postback.data
+        user = line_bot_api.get_profile(event.source.user_id)
+        reply_text = f"{user.display_name} 查詢\n\n"
+        if res == "action=Setting":
+            line_bot_api.reply_message(ReplyMessageRequest(
+                reply_token = event.reply_token, 
+                messages=[TextMessage(text=setting.content)]
+            ))
+            return "OK"
+        
+        elif res == "action=Introduce":
+            line_bot_api.reply_message(ReplyMessageRequest(
+                reply_token = event.reply_token, 
+                messages=[TextMessage(text=setting.introduce)]
+            ))
+            return "OK"
+        
+        group_id = event.source.group_id
+        db = DB()
+        clan_id = db.get_clan_by_group_id(group_id)
+        db.close()
         if clan_id == None:
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text="尚未設定部落")]
             ))
             return
-        
         clan = Clan(clan_id)
-        res = event.postback.data
-        user = line_bot_api.get_profile(event.source.user_id)
-        reply_text = f"{user.display_name} 查詢\n\n"
         if res == "action=Capital_not_end":
             print("Capital_not_end")
             data = clan.clan_capital_not_end()
@@ -161,6 +175,7 @@ def handle_message(event: PostbackEvent):
                 messages=[TextMessage(text=reply_text)]
             ))
         elif res == "action=Capital_not_start":
+            print("Capital_not_start")
             data = clan.clan_capital_not_start()
             reply_text += f"突襲{data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']}個名額\n"
             reply_text += "尚未打突襲的成員有：\n"
@@ -191,7 +206,16 @@ def handle_message(event: PostbackEvent):
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text=reply_text)]
             ))
-            
+    return 'OK'
+
+@handler.add(JoinEvent)
+def handle_join(event):
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.reply_message(ReplyMessageRequest(
+            reply_token = event.reply_token, 
+            messages=[TextMessage(text=setting.introduce)]
+        ))
     return 'OK'
 
 if __name__ == "__main__":

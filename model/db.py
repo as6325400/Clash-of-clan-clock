@@ -50,10 +50,12 @@ class DB():
         return inform
     
     def get_clan_by_group_id(self, group_id):
+        print("group_id", group_id)
         self.cursor.execute(f"Select * from linegroup where group_id = '{group_id}'")
-        if self.cursor.fetchone() == None:
+        res = self.cursor.fetchone()
+        if res == None:
             return None
-        gid = self.cursor.fetchone()[0]
+        gid = res[0]
         self.cursor.execute(f"Select clan_id from clan_group_relationship where group_id = '{gid}'")
         clan_id = self.cursor.fetchone()
         if clan_id == None:

@@ -24,7 +24,7 @@ flex_message = {
                     "height": "sm",
                     "action": {
                         "type": "postback",
-                        "label": "Not yet ended",
+                        "label": "Capital Not yet ended",
                         "data": "action=Capital_not_end"
                     }
                 },
@@ -47,9 +47,18 @@ flex_message = {
                 {
                     "type": "button",
                     "action": {
-                        "type": "uri",
+                        "type": "postback",
                         "label": "Setting",
-                        "uri": "http://linecorp.com/"
+                        "data": "action=Setting"
+                    },
+                    "height": "sm"
+                },
+                {
+                    "type": "button",
+                    "action": {
+                        "type": "postback",
+                        "label": "Introduce",
+                        "data": "action=Introduce"
                     },
                     "height": "sm"
                 }
