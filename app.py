@@ -12,6 +12,7 @@ from linebot.v3.exceptions import (
 from linebot.v3.webhooks import (
     MessageEvent,
     TextMessageContent,
+    PostbackEvent,
 )
 from linebot.v3.messaging import (
     Configuration,
@@ -27,6 +28,7 @@ from linebot.models import FlexSendMessage, BubbleContainer
 
 from dotenv import load_dotenv
 from src import flex
+from model.clan import Clan
 
 load_dotenv()
 
@@ -68,26 +70,65 @@ def callback():
 
     return 'OK'
 
-
 @handler.add(MessageEvent, message=TextMessageContent)
-def message_text(event):
+def message_text(event: MessageEvent):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         flex_message = flex.flex_message
-        print(event.message.text)
         if event.message.text.strip() == "clock":
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[FlexMessage.from_dict(flex_message)]
             ))
-        else:
-            line_bot_api.reply_message_with_http_info(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text=event.source.group_id)]
-                )
-            )
-
+            
+        # else:
+        #     user_id = event.source.user_id
+        #     profile = line_bot_api.get_profile(user_id)
+        #     user_name = profile.display_name
+        #     line_bot_api.reply_message_with_http_info(
+        #         ReplyMessageRequest(
+        #             reply_token=event.reply_token,
+        #             messages=[TextMessage(text=f"@{user_name}")]
+        #         )
+        #     )
+        
+@handler.add(PostbackEvent)
+def handle_message(event: PostbackEvent):
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        clan = Clan("#9LY9RLRL")
+        res = event.postback.data
+        user = line_bot_api.get_profile(event.source.user_id)
+        if res == "action=Capital_not_end":
+            print("Capital_not_end")
+            data = clan.clan_capital_not_end()
+            reply_text = f"{user.display_name} 查詢\n\n"
+            reply_text += f"突襲{data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']}個名額\n"
+            count = 1
+            for i in data["member_list"]:
+                if i["attack_times"] < i["total_attack_nums"]:
+                    reply_text += f"{count}. {i['name']} {i["attack_times"]}/{ i["total_attack_nums"]}\n"
+                    count += 1
+             
+            line_bot_api.reply_message(ReplyMessageRequest(
+                reply_token = event.reply_token, 
+                messages=[TextMessage(text=reply_text)]
+            ))
+        elif res == "action=Capital_not_start":
+            data = clan.clan_capital_not_start()
+            reply_text = f"{user.display_name} 查詢\n\n"
+            reply_text += f"突襲{data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']}個名額\n"
+            reply_text += "尚未打突襲的成員有：\n"
+            count = 1
+            
+            for i in data["member_list"]:
+                reply_text += f"{count}. {i['name']}\n"
+                count += 1
+            
+            line_bot_api.reply_message(ReplyMessageRequest(
+                reply_token = event.reply_token, 
+                messages=[TextMessage(text=reply_text)]
+            ))
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(

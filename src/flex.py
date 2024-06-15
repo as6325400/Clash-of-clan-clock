@@ -1,6 +1,6 @@
 flex_message = {
     "type": "flex",
-    "altText":"test", #alt_text
+    "altText": "test",  # alt_text
     "contents": {
         "type": "bubble",
         "hero": {
@@ -10,63 +10,60 @@ flex_message = {
             "aspectRatio": "20:13",
             "aspectMode": "cover",
             "action": {
-            "type": "uri",
-            "uri": "https://line.me/"
+                "type": "uri",
+                "uri": "https://line.me/"
             }
-        },
-        "body": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-            {
-                "type": "text",
-                "text": "COC Clock",
-                "weight": "bold",
-                "size": "xl"
-            },
-            {
-                "type": "box",
-                "layout": "vertical",
-                "margin": "lg",
-                "spacing": "sm",
-                "contents": []
-            }
-            ]
         },
         "footer": {
             "type": "box",
             "layout": "vertical",
             "spacing": "sm",
             "contents": [
-            {
-                "type": "button",
-                "style": "link",
-                "height": "sm",
-                "action": {
-                "type": "uri",
-                "label": "CALL",
-                "uri": "https://line.me/"
-                }
-            },
-            {
-                "type": "button",
-                "style": "link",
-                "height": "sm",
-                "action": {
-                "type": "uri",
-                "label": "WEBSITE",
-                "uri": "https://line.me/"
-                }
-            },
-            {
-                "type": "button",
-                "action": {
-                "type": "uri",
-                "label": "Setting",
-                "uri": "http://linecorp.com/"
+                {
+                    "type": "button",
+                    "style": "link",
+                    "height": "sm",
+                    "action": {
+                        "type": "uri",
+                        "label": "War",
+                        "uri": "https://line.me/"
+                    }
                 },
-                "height": "sm"
-            }
+                {
+                    "type": "button",
+                    "style": "link",
+                    "height": "sm",
+                    "action": {
+                        "type": "postback",
+                        "label": "Capital",
+                        "data": "action=Capital_not_end"
+                    }
+                },
+                {
+                    "type": "button",
+                    "style": "link",
+                    "height": "sm",
+                    "action": {
+                        "type": "postback",
+                        "label": "Capital Not Start",
+                        "data": "action=Capital_not_start"
+                    }
+                },
+                {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [],
+                    "margin": "sm"
+                },
+                {
+                    "type": "button",
+                    "action": {
+                        "type": "uri",
+                        "label": "Setting",
+                        "uri": "http://linecorp.com/"
+                    },
+                    "height": "sm"
+                }
             ],
             "flex": 0
         }
