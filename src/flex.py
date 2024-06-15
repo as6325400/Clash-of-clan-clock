@@ -1,19 +1,8 @@
 flex_message = {
     "type": "flex",
-    "altText": "test",  # alt_text
+    "altText": "coc clock",  # alt_text
     "contents": {
         "type": "bubble",
-        "hero": {
-            "type": "image",
-            "url": "https://developers-resource.landpress.line.me/fx/img/01_1_cafe.png",
-            "size": "full",
-            "aspectRatio": "20:13",
-            "aspectMode": "cover",
-            "action": {
-                "type": "uri",
-                "uri": "https://line.me/"
-            }
-        },
         "footer": {
             "type": "box",
             "layout": "vertical",
@@ -35,7 +24,7 @@ flex_message = {
                     "height": "sm",
                     "action": {
                         "type": "postback",
-                        "label": "Capital",
+                        "label": "Not yet ended",
                         "data": "action=Capital_not_end"
                     }
                 },

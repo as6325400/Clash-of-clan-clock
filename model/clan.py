@@ -16,15 +16,21 @@ class Clan():
             "authorization": f"Bearer {os.getenv('CLASHOFCLAN_TOKEN')}"
         }
     
-    def clan_exist(self):
+    def clan_info(self):
         url = f"{self.base_request_url}{self.tag}"
         try:
+            inform = {
+                "exist": False,
+                "name": ""
+            }
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()
+            data = response.json()
             if(response.status_code == 200):
-                return True
-            else:
-                return False
+                inform["exist"] = True
+                inform["name"] = data["name"]
+            
+            return inform
         except Exception as e:
             sys.stderr.write(f"An unexpected error occurred: {e}\n")
             

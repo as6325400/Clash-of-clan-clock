@@ -29,6 +29,7 @@ from linebot.models import FlexSendMessage, BubbleContainer
 from dotenv import load_dotenv
 from src import flex
 from model.clan import Clan
+from model.db import DB
 
 load_dotenv()
 
@@ -67,36 +68,81 @@ def callback():
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
-
+    except Exception as e:
+        app.logger.error(f"Error handling webhook: {e}")
+        abort(500)
     return 'OK'
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def message_text(event: MessageEvent):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
+        
+        user_profile = line_bot_api.get_profile(event.source.user_id)
+        if user_profile.user_id == line_bot_api.get_bot_info().user_id:
+            app.logger.info("Message from bot itself, ignoring.")
+            return
+            
         flex_message = flex.flex_message
         if event.message.text.strip() == "clock":
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[FlexMessage.from_dict(flex_message)]
             ))
-            
-        # else:
-        #     user_id = event.source.user_id
-        #     profile = line_bot_api.get_profile(user_id)
-        #     user_name = profile.display_name
-        #     line_bot_api.reply_message_with_http_info(
-        #         ReplyMessageRequest(
-        #             reply_token=event.reply_token,
-        #             messages=[TextMessage(text=f"@{user_name}")]
-        #         )
-        #     )
+        else:
+            argv = event.message.text.strip().split(" ")
+            if argv[0] == "/clock":
+                print(argv)
+                if len(argv) == 2:
+                    # add setting to db (group and clan tag)
+                    if argv[1] != "-r":
+                        group_id = event.source.group_id
+                        clan_tag = argv[1]
+                        clan = Clan(clan_tag)
+                        inform = clan.clan_info()
+                        if inform["exist"]:
+                            db = DB()
+                            res = db.add_clan_and_group(clan_tag, inform["name"], group_id)
+                            db.close()
+                            line_bot_api.reply_message(ReplyMessageRequest(
+                                reply_token = event.reply_token, 
+                                messages=[TextMessage(text=res["message"])]
+                            ))
+                        else:
+                            line_bot_api.reply_message(ReplyMessageRequest(
+                                reply_token = event.reply_token, 
+                                messages=[TextMessage(text=f"部落不存在或權限尚未開啟")]
+                            ))
+                    else:
+                        # remove setting from db
+                        group_id = event.source.group_id
+                        db = DB()
+                        res = db.remove_clan_and_group(group_id)
+                        db.close()
+                        line_bot_api.reply_message(ReplyMessageRequest(
+                            reply_token = event.reply_token, 
+                            messages=[TextMessage(text=res["message"])]
+                        ))
+    return 'OK'
+
         
 @handler.add(PostbackEvent)
 def handle_message(event: PostbackEvent):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        clan = Clan("#9LY9RLRL")
+        griup_id = event.source.group_id
+        db = DB()
+        clan_id = db.get_clan_by_group_id(griup_id)
+        db.close()
+        
+        if clan_id == None:
+            line_bot_api.reply_message(ReplyMessageRequest(
+                reply_token = event.reply_token, 
+                messages=[TextMessage(text="尚未設定部落")]
+            ))
+            return
+        
+        clan = Clan(clan_id)
         res = event.postback.data
         user = line_bot_api.get_profile(event.source.user_id)
         reply_text = f"{user.display_name} 查詢\n\n"
@@ -145,12 +191,8 @@ def handle_message(event: PostbackEvent):
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text=reply_text)]
             ))
+            
+    return 'OK'
 
 if __name__ == "__main__":
-    arg_parser = ArgumentParser(
-        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
-    )
-    arg_parser.add_argument('-p', '--port', default=port, help='port')
-    arg_parser.add_argument('-d', '--debug', default=False, help='debug')
-    options = arg_parser.parse_args()
-    app.run(debug=options.debug, port=options.port)
+    app.run(port=port)
