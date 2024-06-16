@@ -201,7 +201,7 @@ def handle_message(event: PostbackEvent):
                     reply_text += "失敗\n"
                 elif data["final"] == 0:
                     reply_text += "平手\n"
-                reply_text += f"{data['ours']['stars']}{data['theirs']['stars']}\n\n"
+                reply_text += f"{data['ours']['stars']}-{data['theirs']['stars']}\n\n"
                 reply_text += "未進攻的成員有：\n"
             else:
                 reply_text += f"部落戰將於台北時間{data["end_time"]["hours_taipei"]}:{data["end_time"]["minutes_taipei"]}結束\n"
