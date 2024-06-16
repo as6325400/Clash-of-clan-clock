@@ -14,7 +14,7 @@ flex_message = {
                     "height": "sm",
                     "action": {
                         "type": "postback",
-                        "label": "War",
+                        "label": "部落戰",
                         "data": "action=War"
                     }
                 },
@@ -24,7 +24,7 @@ flex_message = {
                     "height": "sm",
                     "action": {
                         "type": "postback",
-                        "label": "Capital Not yet ended",
+                        "label": "突襲尚未完成名單",
                         "data": "action=Capital_not_end"
                     }
                 },
@@ -34,7 +34,7 @@ flex_message = {
                     "height": "sm",
                     "action": {
                         "type": "postback",
-                        "label": "Capital Not Start",
+                        "label": "突襲尚未參與名單",
                         "data": "action=Capital_not_start"
                     }
                 },
@@ -48,7 +48,7 @@ flex_message = {
                     "type": "button",
                     "action": {
                         "type": "postback",
-                        "label": "Setting",
+                        "label": "設定教學",
                         "data": "action=Setting"
                     },
                     "height": "sm"
@@ -57,7 +57,7 @@ flex_message = {
                     "type": "button",
                     "action": {
                         "type": "postback",
-                        "label": "Introduce",
+                        "label": "介紹教學",
                         "data": "action=Introduce"
                     },
                     "height": "sm"
