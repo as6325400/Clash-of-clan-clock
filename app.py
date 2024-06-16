@@ -203,15 +203,20 @@ def handle_message(event: PostbackEvent):
                     reply_text += "平手\n"
                 reply_text += f"{data['ours']['stars']}-{data['theirs']['stars']}\n\n"
                 reply_text += "未進攻的成員有：\n"
-            else:
+            elif data["state"] == "inWar":
                 reply_text += f"部落戰將於台北時間{data["end_time"]["hours_taipei"]}:{data["end_time"]["minutes_taipei"]}結束\n"
                 reply_text += f"剩餘 {data["end_time"]["days_remaining"]} 日 {data["end_time"]["hours_remaining"]} 小時 {data["end_time"]["minutes_remaining"]} 分 \n\n"
                 reply_text += "尚未打戰的成員有：\n"
             
-            count = 1
-            for i in data["member_list"]:
-                reply_text += f"{count}. {i['name']} {i['attack_times']}/2\n"
-                count += 1
+            elif data["state"] == "preparation":
+                reply_text += f"部落戰將於台北時間{data["end_time"]["hours_taipei"]}:{data["end_time"]["minutes_taipei"]}開始\n"
+                reply_text += f"剩餘 {data["end_time"]["hours_remaining"]} 小時 {data["end_time"]["minutes_remaining"]} 分 \n\n"
+            
+            if data["state"] == "warEnded" or data["state"] == "inWar":
+                count = 1
+                for i in data["member_list"]:
+                    reply_text += f"{count}. {i['name']} {i['attack_times']}/2\n"
+                    count += 1
                 
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 

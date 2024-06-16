@@ -191,7 +191,7 @@ class Clan():
                     else:
                         inform["final"] = 0
         
-                if data["state"] != "inWar" and data["state"] != "warEnded":
+                if data["state"] != "inWar" and data["state"] != "warEnded" and data["state"] != "preparation":
                     return inform
                 
                 # add not war member
