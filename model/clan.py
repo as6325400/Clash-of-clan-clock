@@ -146,6 +146,38 @@ class Clan():
                     "final": 0
                 }
                 
+                # add end time
+                # 定義 UTC 時區
+                utc = pytz.utc
+                taipei_timezone = pytz.timezone('Asia/Taipei')
+                end_time = datetime.strptime(data['endTime'], "%Y%m%dT%H%M%S.%fZ")
+                # 將其轉換為 UTC 時間
+                end_time_utc = end_time.replace(tzinfo=utc)
+
+                # 獲取當前 UTC 時間
+                current_time_utc = datetime.now(utc)
+
+                # 計算時間差
+                time_difference = end_time_utc - current_time_utc
+
+                # 計算剩餘的天數、小時數和分鐘數
+                days_remaining = time_difference.days
+                seconds_remaining = time_difference.seconds
+                hours_remaining, remainder = divmod(seconds_remaining, 3600)
+                minutes_remaining, _ = divmod(remainder, 60)
+                inform["end_time"] = {
+                    "days_remaining": days_remaining,
+                    "hours_remaining": hours_remaining,
+                    "minutes_remaining": minutes_remaining
+                }
+
+                # 將 end_time 轉換為台北時間
+                end_time_taipei = end_time_utc.astimezone(taipei_timezone)
+                hours_taipei = end_time_taipei.hour
+                minutes_taipei = end_time_taipei.minute
+                inform["end_time"]["hours_taipei"] = hours_taipei
+                inform["end_time"]["minutes_taipei"] = minutes_taipei
+                
                 # compare the final result
                 if inform["ours"]["stars"] > inform["theirs"]["stars"]:
                     inform["final"] = 1
@@ -182,37 +214,6 @@ class Clan():
                             "attack_times": 0,
                         })
                 
-                # add end time
-                # 定義 UTC 時區
-                utc = pytz.utc
-                taipei_timezone = pytz.timezone('Asia/Taipei')
-                end_time = datetime.strptime(data['endTime'], "%Y%m%dT%H%M%S.%fZ")
-                # 將其轉換為 UTC 時間
-                end_time_utc = end_time.replace(tzinfo=utc)
-
-                # 獲取當前 UTC 時間
-                current_time_utc = datetime.now(utc)
-
-                # 計算時間差
-                time_difference = end_time_utc - current_time_utc
-
-                # 計算剩餘的天數、小時數和分鐘數
-                days_remaining = time_difference.days
-                seconds_remaining = time_difference.seconds
-                hours_remaining, remainder = divmod(seconds_remaining, 3600)
-                minutes_remaining, _ = divmod(remainder, 60)
-                inform["end_time"] = {
-                    "days_remaining": days_remaining,
-                    "hours_remaining": hours_remaining,
-                    "minutes_remaining": minutes_remaining
-                }
-
-                # 將 end_time 轉換為台北時間
-                end_time_taipei = end_time_utc.astimezone(taipei_timezone)
-                hours_taipei = end_time_taipei.hour
-                minutes_taipei = end_time_taipei.minute
-                inform["end_time"]["hours_taipei"] = hours_taipei
-                inform["end_time"]["minutes_taipei"] = minutes_taipei
 
                 return inform
             
