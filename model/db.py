@@ -90,6 +90,13 @@ class DB():
         inform["message"] = "刪除成功"
         return inform
     
+    def pulse(self):
+        try:
+            self.cursor.execute("Select 1")
+            self.close()
+        except Exception as e:
+            print("DB pulse error: ", e)
+            
     def close(self):
         if self.conn:
             self.conn.close()

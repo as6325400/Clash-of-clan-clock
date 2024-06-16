@@ -1,6 +1,7 @@
 import os
 import sys
 from argparse import ArgumentParser
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from flask import Flask, request, abort
 from linebot.v3 import (
@@ -217,6 +218,10 @@ def handle_join(event):
             messages=[TextMessage(text=setting.introduce)]
         ))
     return 'OK'
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=DB().pulse(), trigger="interval", minutes=10)
+scheduler.start()
 
 if __name__ == "__main__":
     app.run(port=port)
