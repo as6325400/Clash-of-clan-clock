@@ -212,6 +212,10 @@ def handle_message(event: PostbackEvent):
                 reply_text += f"部落戰將於台北時間{data["end_time"]["hours_taipei"]}:{data["end_time"]["minutes_taipei"]}開始\n"
                 reply_text += f"剩餘 {data["end_time"]["hours_remaining"]} 小時 {data["end_time"]["minutes_remaining"]} 分 \n\n"
             
+            elif data["state"] == "notInWar":
+                reply_text += "尚未參與部落戰\n"
+            
+            # only in war or war ended to display member list
             if data["state"] == "warEnded" or data["state"] == "inWar":
                 count = 1
                 for i in data["member_list"]:

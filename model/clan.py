@@ -195,25 +195,28 @@ class Clan():
                     return inform
                 
                 # add not war member
-                for member in data['clan']['members']:
-                    if member.get("attacks"):
-                        
-                        if len(member["attacks"]) >= 2:
-                            continue
-                        
-                        inform["member_list"].append({
-                            "name": member["name"],
-                            "tag": member["tag"],
-                            "attack_times": int(len(member["attacks"])),
-                        })
-                        
-                    else:
-                        inform["member_list"].append({
-                            "name": member["name"],
-                            "tag": member["tag"],
-                            "attack_times": 0,
-                        })
-                
+                try:
+                    for member in data['clan']['members']:
+                        if member.get("attacks"):
+                            
+                            if len(member["attacks"]) >= 2:
+                                continue
+                            
+                            inform["member_list"].append({
+                                "name": member["name"],
+                                "tag": member["tag"],
+                                "attack_times": int(len(member["attacks"])),
+                            })
+                            
+                        else:
+                            inform["member_list"].append({
+                                "name": member["name"],
+                                "tag": member["tag"],
+                                "attack_times": 0,
+                            })
+                except Exception as e:
+                    print(f"An unexpected error occurred: {e}\n")
+                    
                 return inform
             
             else:
