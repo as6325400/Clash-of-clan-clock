@@ -193,16 +193,23 @@ def handle_message(event: PostbackEvent):
             
         elif res == "action=War":
             data = clan.clan_war_not_end()
-            if data["state"] != "inWar":
-                reply_text += "目前沒有打戰\n"
+            if data["state"] == "warEnded":
+                reply_text += f"部落戰已於台北時間{data["end_time"]["hours_taipei"]}:{data["end_time"]["minutes_taipei"]}結束\n\n"
+                if data["final"] == 1:
+                    reply_text += "勝利\n"
+                elif data["final"] == -1:
+                    reply_text += "失敗\n"
+                elif data["final"] == 0:
+                    reply_text += "平手\n"
+                reply_text += "未進攻的成員有：\n"
             else:
                 reply_text += f"部落戰將於台北時間{data["end_time"]["hours_taipei"]}:{data["end_time"]["minutes_taipei"]}結束\n"
                 reply_text += f"剩餘 {data["end_time"]["days_remaining"]} 日 {data["end_time"]["hours_remaining"]} 小時 {data["end_time"]["minutes_remaining"]} 分 \n\n"
                 reply_text += "尚未打戰的成員有：\n"
                 count = 1
-                for i in data["member_list"]:
-                    reply_text += f"{count}. {i['name']} {i['attack_times']}/2\n"
-                    count += 1
+            for i in data["member_list"]:
+                reply_text += f"{count}. {i['name']} {i['attack_times']}/2\n"
+                count += 1
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text=reply_text)]

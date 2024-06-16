@@ -134,10 +134,32 @@ class Clan():
                     "member_list": [],
                     "end_time": {
                         
-                    }
+                    },
+                    "ours":{
+                        "stars": data["clan"]["stars"],
+                        "destructionPercentage": float(data["clan"]["destructionPercentage"])
+                    },
+                    "theirs":{
+                        "stars": data["opponent"]["stars"],
+                        "destructionPercentage": float(data["opponent"]["destructionPercentage"])
+                    },
+                    "final": 0
                 }
                 
-                if data["state"] != "inWar":
+                # compare the final result
+                if inform["ours"]["stars"] > inform["theirs"]["stars"]:
+                    inform["final"] = 1
+                elif inform["ours"]["stars"] < inform["theirs"]["stars"]:
+                    inform["final"] = -1
+                else:
+                    if inform["ours"]["destructionPercentage"] > inform["theirs"]["destructionPercentage"]:
+                        inform["final"] = 1
+                    elif inform["ours"]["destructionPercentage"] < inform["theirs"]["destructionPercentage"]:
+                        inform["final"] = -1
+                    else:
+                        inform["final"] = 0
+        
+                if data["state"] != "inWar" or data["state"] != "warEnded":
                     return inform
                 
                 # add not war member

@@ -11,7 +11,7 @@ services:
         depends_on:
             - mariadb
     mariadb:
-        container_name: mariadb
+        container_name: mariadb_cocclock
         image: mariadb:latest
         ports:
             - "3306:3306"
