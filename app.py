@@ -164,7 +164,7 @@ def handle_message(event: PostbackEvent):
         if res == "action=Capital_not_end":
             print("Capital_not_end")
             data = clan.clan_capital_not_end()
-            reply_text += f"突襲{data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']}個名額\n"
+            reply_text += f"突襲 {data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']} 個名額\n"
             count = 1
             for i in data["member_list"]:
                 if i["attack_times"] < i["total_attack_nums"]:
@@ -178,7 +178,7 @@ def handle_message(event: PostbackEvent):
         elif res == "action=Capital_not_start":
             print("Capital_not_start")
             data = clan.clan_capital_not_start()
-            reply_text += f"突襲{data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']}個名額\n"
+            reply_text += f"突襲 {data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']} 個名額\n"
             reply_text += "尚未打突襲的成員有：\n"
             count = 1
             
