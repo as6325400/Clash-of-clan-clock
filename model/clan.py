@@ -146,6 +146,9 @@ class Clan():
                     "final": 0
                 }
                 
+                if data["state"] == "notInWar":
+                    return inform
+                
                 # add end time
                 # 定義 UTC 時區
                 utc = pytz.utc
