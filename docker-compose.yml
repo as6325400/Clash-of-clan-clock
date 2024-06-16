@@ -4,17 +4,17 @@ services:
         container_name: phpmyadmin_cocclock
         image: phpmyadmin/phpmyadmin
         ports:
-            - "8085:80"
+            - "8080:80"
         environment:
             PMA_HOST: mariadb
             MYSQL_ROOT_PASSWORD: root
         depends_on:
             - mariadb
     mariadb:
-        container_name: mariadb_cocclock
+        container_name: mariadb
         image: mariadb:latest
         ports:
-            - "3310:3306"
+            - "3306:3306"
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: cocclock

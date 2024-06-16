@@ -6,11 +6,11 @@ load_dotenv()
 class DB():
     def __init__(self):
         self.conn = pymysql.connect(
-            host=os.environ.get("ALEMBIC_HOST"),
-            user=os.environ.get("ALEMBIC_USER"),
-            password=os.environ.get("ALEMBIC_PASSWORD"),
-            database=os.environ.get("ALEMBIC_DB"),
-            port=int(os.environ.get("ALEMBIC_PORT")),
+            host=os.getenv("ALEMBIC_HOST"),
+            user=os.getenv("ALEMBIC_USER"),
+            password=os.getenv("ALEMBIC_PASSWORD"),
+            database=os.getenv("ALEMBIC_DB"),
+            port=int(os.getenv("ALEMBIC_PORT")),
         )
         self.cursor = self.conn.cursor()
     

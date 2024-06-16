@@ -16,6 +16,8 @@ flask-migrate = "^4.0.7"
 pymysql = "^1.1.1"
 cryptography = "^42.0.8"
 pytz = "^2024.1"
+gunicorn = "^22.0.0"
+uwsgi = "^2.0.26"
 
 
 [build-system]
