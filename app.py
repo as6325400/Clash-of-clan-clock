@@ -222,7 +222,7 @@ def handle_join(event):
 scheduler = BackgroundScheduler()
 # 10 minutes
 db = DB()
-scheduler.add_job(func= db.pulse(), trigger="interval", minutes=10)
+scheduler.add_job(func= db.pulse, trigger="interval", minutes=10)
 scheduler.start()
 
 if __name__ == "__main__":
