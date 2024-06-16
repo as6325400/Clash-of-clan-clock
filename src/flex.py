@@ -1,6 +1,6 @@
 flex_message = {
     "type": "flex",
-    "altText": "coc clock",  # alt_text
+    "altText": "clock",  # alt_text
     "contents": {
         "type": "bubble",
         "footer": {
