@@ -214,7 +214,7 @@ class Clan():
                             "attack_times": 0,
                         })
                 
-
+                print(48763)
                 return inform
             
             else:
