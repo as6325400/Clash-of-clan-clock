@@ -143,10 +143,10 @@ def handle_message(event: PostbackEvent):
             text = setting.content
             
             if clan_id == None:
-                text += "尚未設定部落\n"
+                text += "\n尚未設定部落\n"
             else:
                 clan = Clan(clan_id)
-                text += f"已設定部落：{clan.clan_info()["name"]}\n"
+                text += f"\n已設定部落：{clan.clan_info()["name"]}\n"
                 
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
