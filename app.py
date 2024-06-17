@@ -132,11 +132,22 @@ def message_text(event: MessageEvent):
 def handle_message(event: PostbackEvent):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        
+        group_id = event.source.group_id
+        db = DB()
+        clan_id = db.get_clan_by_group_id(group_id)
+        db.close()
         res = event.postback.data
         user = line_bot_api.get_profile(event.source.user_id)
         reply_text = f"{user.display_name} 查詢\n\n"
         if res == "action=Setting":
+            text = setting.content
+            
+            if clan_id == None:
+                text += "尚未設定部落\n"
+            else:
+                clan = Clan(clan_id)
+                text += f"已設定部落：{clan.clan_info()["name"]}\n"
+                
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text=setting.content)]
@@ -150,10 +161,6 @@ def handle_message(event: PostbackEvent):
             ))
             return "OK"
         
-        group_id = event.source.group_id
-        db = DB()
-        clan_id = db.get_clan_by_group_id(group_id)
-        db.close()
         if clan_id == None:
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
