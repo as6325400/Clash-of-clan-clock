@@ -14,6 +14,16 @@ flex_message = {
                     "height": "sm",
                     "action": {
                         "type": "postback",
+                        "label": "部落聯賽",
+                        "data": "action=Cwl"
+                    }
+                },
+                {
+                    "type": "button",
+                    "style": "link",
+                    "height": "sm",
+                    "action": {
+                        "type": "postback",
                         "label": "部落戰",
                         "data": "action=War"
                     }

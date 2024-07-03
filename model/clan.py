@@ -18,11 +18,11 @@ class Clan():
     
     def clan_info(self):
         url = f"{self.base_request_url}{self.tag}"
-        try:
-            inform = {
+        inform = {
                 "exist": False,
                 "name": ""
             }
+        try:
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()
             data = response.json()
@@ -30,9 +30,11 @@ class Clan():
                 inform["exist"] = True
                 inform["name"] = data["name"]
             
-            return inform
         except Exception as e:
+            print(f"An unexpected error occurred: {e}\n")
             sys.stderr.write(f"An unexpected error occurred: {e}\n")
+            
+        return inform
             
     def clan_capital_not_end(self):
         url = f"{self.base_request_url}{self.tag}/capitalraidseasons"

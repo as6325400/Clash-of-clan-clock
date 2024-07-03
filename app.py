@@ -33,7 +33,7 @@ from src import flex, setting
 from model.clan import Clan
 from model.db import DB
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = Flask(__name__)
 
@@ -68,7 +68,9 @@ def callback():
     # handle webhook body
     try:
         handler.handle(body, signature)
-    except InvalidSignatureError:
+    except InvalidSignatureError as e:
+        print(channel_secret)
+        print(e)
         abort(400)
     except Exception as e:
         app.logger.error(f"Error handling webhook: {e}")
@@ -102,7 +104,7 @@ def message_text(event: MessageEvent):
                         clan_tag = argv[1]
                         clan = Clan(clan_tag)
                         inform = clan.clan_info()
-                        if inform["exist"]:
+                        if "exist" in inform and inform["exist"]:
                             db = DB()
                             res = db.add_clan_and_group(clan_tag, inform["name"], group_id)
                             db.close()
@@ -111,6 +113,7 @@ def message_text(event: MessageEvent):
                                 messages=[TextMessage(text=res["message"])]
                             ))
                         else:
+                            print("clan not exist")
                             line_bot_api.reply_message(ReplyMessageRequest(
                                 reply_token = event.reply_token, 
                                 messages=[TextMessage(text=f"部落不存在或權限尚未開啟")]
@@ -236,6 +239,13 @@ def handle_message(event: PostbackEvent):
                     reply_text += f"{count}. {i['name']} {i['attack_times']}/2\n"
                     count += 1
                 
+            line_bot_api.reply_message(ReplyMessageRequest(
+                reply_token = event.reply_token, 
+                messages=[TextMessage(text=reply_text)]
+            ))
+        
+        elif res == "action=Cwl":
+            reply_text += "部落聯賽\n"
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text=reply_text)]
