@@ -100,13 +100,18 @@ def message_text(event: MessageEvent):
                 if len(argv) == 2:
                     # add setting to db (group and clan tag)
                     if argv[1] != "-r":
-                        group_id = event.source.group_id
+                        print(event.source)
+                        id = None
+                        if event.source.type == "group":
+                            id = event.source.group_id
+                        elif event.source.type == "user":
+                            id = event.source.user_id
                         clan_tag = argv[1]
                         clan = Clan(clan_tag)
                         inform = clan.clan_info()
                         if "exist" in inform and inform["exist"]:
                             db = DB()
-                            res = db.add_clan_and_group(clan_tag, inform["name"], group_id)
+                            res = db.add_clan_and_group(clan_tag, inform["name"], id)
                             db.close()
                             line_bot_api.reply_message(ReplyMessageRequest(
                                 reply_token = event.reply_token, 
@@ -120,9 +125,13 @@ def message_text(event: MessageEvent):
                             ))
                     else:
                         # remove setting from db
-                        group_id = event.source.group_id
+                        id = None
+                        if event.source.type == "group":
+                            id = event.source.group_id
+                        elif event.source.type == "user":
+                            id = event.source.user_id
                         db = DB()
-                        res = db.remove_clan_and_group(group_id)
+                        res = db.remove_clan_and_group(id)
                         db.close()
                         line_bot_api.reply_message(ReplyMessageRequest(
                             reply_token = event.reply_token, 
@@ -135,9 +144,15 @@ def message_text(event: MessageEvent):
 def handle_message(event: PostbackEvent):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        group_id = event.source.group_id
+        
+        id = None
+        if event.source.type == "group":
+            id = event.source.group_id
+        elif event.source.type == "user":
+            id = event.source.user_id
+
         db = DB()
-        clan_id = db.get_clan_by_group_id(group_id)
+        clan_id = db.get_clan_by_group_id(id)
         db.close()
         res = event.postback.data
         user = line_bot_api.get_profile(event.source.user_id)
@@ -245,7 +260,22 @@ def handle_message(event: PostbackEvent):
             ))
         
         elif res == "action=Cwl":
-            reply_text += "部落聯賽\n"
+            reply_text += ""
+            data = clan.clan_cwl()
+            print(data)
+            if data == None or data["state"] == "preparation":
+                reply_text += "尚未進行聯賽\n"
+            elif data["state"] == "inWar":
+                reply_text += f"聯賽進行中\n"
+                reply_text += f"剩餘 {data['end_time']['days_remaining']} 日 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分\n\n"
+                if len(data["member_list"]) == 0:
+                    reply_text += "全員皆完成部落聯賽\n"
+                else:
+                    count = 1
+                    for i in data["member_list"]:
+                        reply_text += f"{count}. {i['name']}\n"
+                        count += 1
+                
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text=reply_text)]
