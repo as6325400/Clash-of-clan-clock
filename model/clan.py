@@ -75,19 +75,19 @@ class Clan():
             sys.stderr.write(f"An unexpected error occurred: {e}\n")
             
     def catch_clan_cwl(self, rounds):
+        print("rounds", rounds)
         for round in rounds[::-1]:
             t = self.catch_clan_cwl_inform(round[0])
             if t == None or t["state"] == "notInWar" or t["state"] == "preparation":
                 print("preparation", t["state"])
                 continue
             elif t["state"] == "mapping" or t["state"] == "inWar":
-                for tag in round:
-                    if tag == round[0]:
-                        continue
-                    t = self.catch_clan_cwl_inform(tag)
+                for tag in round[1:]:
                     if t != None and t["state"] == "mapping":
                         # print("t", t)
                         return t
+                    t = self.catch_clan_cwl_inform(tag)
+                return t
         return None
             
             
