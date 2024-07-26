@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 content = """
+請先把部落戰紀錄設成公開，才能使用此機器人。
+
 若要綁定此 line 群組與部落，請輸入以下指令：
 /clock <部落標籤>
 
