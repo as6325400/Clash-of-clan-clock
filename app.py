@@ -54,6 +54,9 @@ configuration = Configuration(
     access_token=channel_access_token
 )
 
+@app.route("/")
+def hello_world():
+    return "app Start"
 
 @app.route("/callback", methods=['POST'])
 def callback():
