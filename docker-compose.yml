@@ -9,7 +9,7 @@ services:
         container_name: mariadb_cocclock
         image: mariadb:latest
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: nd8XFtVP82gfQgeNFrrvdArF54Sd2bK4
             MYSQL_DATABASE: cocclock
         volumes:
             - ./mariadb:/var/lib/mysql
