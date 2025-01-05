@@ -167,7 +167,7 @@ def handle_message(event: PostbackEvent):
                 text += "\n尚未設定部落\n"
             else:
                 clan = Clan(clan_id)
-                text += f"\n已設定部落：{clan.clan_info()["name"]}\n"
+                text += f"\n已設定部落：{clan.clan_info()['name']}\n"
                 
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
@@ -196,7 +196,7 @@ def handle_message(event: PostbackEvent):
                 count = 1
                 for i in data["member_list"]:
                     if i["attack_times"] < i["total_attack_nums"]:
-                        reply_text += f"{count}. {i['name']} {i["attack_times"]}/{ i["total_attack_nums"]}\n"
+                        reply_text += f"{count}. {i['name']} {i['attack_times']}/{ i['total_attack_nums']}\n"
                         count += 1
             elif data["state"] == "ended":
                 reply_text += "突襲已結束\n"
@@ -229,7 +229,7 @@ def handle_message(event: PostbackEvent):
         elif res == "action=War":
             data = clan.clan_war_not_end()
             if data["state"] == "warEnded":
-                reply_text += f"部落戰已於台北時間 {data["end_time"]["hours_taipei"]}:{data["end_time"]["minutes_taipei"]} 結束\n\n"
+                reply_text += f"部落戰已於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 結束\n\n"
                 if data["final"] == 1:
                     reply_text += "勝利\n"
                 elif data["final"] == -1:
@@ -239,13 +239,13 @@ def handle_message(event: PostbackEvent):
                 reply_text += f"{data['ours']['stars']}-{data['theirs']['stars']}\n\n"
                 reply_text += "未進攻的成員有：\n"
             elif data["state"] == "inWar":
-                reply_text += f"部落戰將於台北時間 {data["end_time"]["hours_taipei"]}:{data["end_time"]["minutes_taipei"]} 結束\n"
-                reply_text += f"剩餘 {data["end_time"]["days_remaining"]} 日 {data["end_time"]["hours_remaining"]} 小時 {data["end_time"]["minutes_remaining"]} 分 \n\n"
+                reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 結束\n"
+                reply_text += f"剩餘 {data['end_time']['days_remaining']} 日 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分 \n\n"
                 reply_text += "尚未打戰的成員有：\n"
             
             elif data["state"] == "preparation":
-                reply_text += f"部落戰將於台北時間 {data["end_time"]["hours_taipei"]}:{data["end_time"]["minutes_taipei"]} 開始\n"
-                reply_text += f"剩餘 {data["end_time"]["hours_remaining"]} 小時 {data["end_time"]["minutes_remaining"]} 分 \n\n"
+                reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 開始\n"
+                reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分 \n\n"
             
             elif data["state"] == "notInWar":
                 reply_text += "尚未參與部落戰\n"

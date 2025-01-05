@@ -6,7 +6,7 @@ authors = ["as6325400 <as6325400@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 flask = "^3.0.3"
 line-bot-sdk = "^3.11.0"
 python-dotenv = "^1.0.1"

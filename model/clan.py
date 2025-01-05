@@ -92,7 +92,7 @@ class Clan():
             
             
     def catch_clan_cwl_inform(self, tag):
-        url = f"{self.base_request_url[:-6]}clanwarleagues/wars/{"%23" + tag[1:]}"
+        url = f"{self.base_request_url[:-6]}clanwarleagues/wars/{'%23' + tag[1:]}"
         try:
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()
