@@ -1,5 +1,21 @@
 version: '3'
+
+networks:
+    cocclock-net:
+        driver: bridge
+
 services:
+    mariadb:
+        container_name: mariadb_cocclock
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: cocclock
+        volumes:
+            - ./mariadb:/var/lib/mysql
+        networks:
+            - cocclock-net
+
     database:
         container_name: phpmyadmin_cocclock
         image: phpmyadmin/phpmyadmin
@@ -10,13 +26,17 @@ services:
             MYSQL_ROOT_PASSWORD: root
         depends_on:
             - mariadb
-    mariadb:
-        container_name: mariadb_cocclock
-        image: mariadb:latest
-        ports:
-            - "3306:3306"
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: cocclock
+        networks:
+            - cocclock-net
+
+    app:
+        container_name: cocclock_app
+        build:
+            context: .
+            dockerfile: Dockerfile
         volumes:
-            - ./mariadb:/var/lib/mysql
+            - .:/app
+        depends_on:
+            - mariadb
+        networks:
+            - cocclock-net
