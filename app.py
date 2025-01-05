@@ -56,6 +56,7 @@ configuration = Configuration(
 
 @app.route("/")
 def hello_world():
+    print("hello world")
     return "app Start"
 
 @app.route("/callback", methods=['POST'])

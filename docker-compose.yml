@@ -20,7 +20,7 @@ services:
         container_name: phpmyadmin_cocclock
         image: phpmyadmin/phpmyadmin
         ports:
-            - "8080:80"
+            - "9011:80"
         environment:
             PMA_HOST: mariadb
             MYSQL_ROOT_PASSWORD: root
@@ -34,6 +34,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
+        ports:
+            - "5050:5000"
         volumes:
             - .:/app
         depends_on:
