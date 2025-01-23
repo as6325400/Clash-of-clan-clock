@@ -21,7 +21,7 @@ services:
         container_name: phpmyadmin_cocclock
         image: phpmyadmin/phpmyadmin
         ports:
-            - "9011:80"
+            - "127.0.0.1:9011:80"
         environment:
             PMA_HOST: mariadb
             MYSQL_ROOT_PASSWORD: root
