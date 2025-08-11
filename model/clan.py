@@ -185,7 +185,9 @@ class Clan():
                 inform = {
                     "state": data["state"],
                     "attack_member_nums": len(data["members"]),
-                    "member_list": []
+                    "member_list": [],
+                    "capitalTotalLoot": data.get("capitalTotalLoot", 0),
+                    "totalAttacks": data.get("totalAttacks", 0)
                 }
                 
                 for member in data['members']:
