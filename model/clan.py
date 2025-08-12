@@ -279,9 +279,12 @@ class Clan():
                     },
                     "final": 0
                 }
-                
+
                 if data["state"] == "notInWar":
                     return inform
+
+                inform["teamSize"] = data.get("teamSize", 0)
+                inform["all_stars_achieved"] = (inform["ours"]["stars"] == inform["teamSize"] * 3) and (inform["teamSize"] > 0)
                 
                 # add end time
                 # 定義 UTC 時區
