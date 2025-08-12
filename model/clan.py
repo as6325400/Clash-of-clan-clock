@@ -61,6 +61,8 @@ class Clan():
                 if cwl_war != None:
                     # print("cwl_war", cwl_war)
                     inform["end_time"] = cwl_war["end_time"]
+                    inform["ours"] = cwl_war["ours"]
+                    inform["theirs"] = cwl_war["theirs"]
                     # inform["members"] = cwl_war["members"]
                     for member in cwl_war["members"]:
                         if member["attack_times"] == 0:
@@ -103,6 +105,14 @@ class Clan():
                     "members": [],
                     "end_time": {
                         
+                    },
+                    "ours":{
+                        "stars": data["clan"]["stars"],
+                        "destructionPercentage": float(data["clan"]["destructionPercentage"])
+                    },
+                    "theirs":{
+                        "stars": data["opponent"]["stars"],
+                        "destructionPercentage": float(data["opponent"]["destructionPercentage"])
                     }
                 }
                 
@@ -283,8 +293,9 @@ class Clan():
                 if data["state"] == "notInWar":
                     return inform
 
-                inform["teamSize"] = data.get("teamSize", 0)
-                inform["all_stars_achieved"] = (inform["ours"]["stars"] == inform["teamSize"] * 3) and (inform["teamSize"] > 0)
+                team_size = data.get("teamSize", 0)
+                if team_size > 0:
+                    inform["max_stars"] = team_size * 3
                 
                 # add end time
                 # 定義 UTC 時區

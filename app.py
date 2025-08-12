@@ -244,10 +244,8 @@ def handle_message(event: PostbackEvent):
             elif data["state"] == "inWar":
                 reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 結束\n"
                 reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分 \n\n"
-                reply_text += f"目前比數 : {data['ours']['stars']} - {data['theirs']['stars']}"
-                if data.get("all_stars_achieved"):
-                    reply_text += "(我方已滿星)"
-                reply_text += "\n\n尚未打戰的成員有：\n"
+                reply_text += f"目前比數 : {data['ours']['stars']} - {data['theirs']['stars']} (最大比分 : {data['max_stars']})\n\n"
+                reply_text += "尚未打戰的成員有：\n"
             
             elif data["state"] == "preparation":
                 reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 開始\n"
@@ -277,9 +275,11 @@ def handle_message(event: PostbackEvent):
             elif data["state"] == "inWar":
                 reply_text += f"聯賽進行中\n"
                 reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分\n\n"
+                reply_text += f"目前比數 : {data['ours']['stars']} - {data['theirs']['stars']}\n\n"
                 if len(data["member_list"]) == 0:
                     reply_text += "全員皆完成部落聯賽\n"
                 else:
+                    reply_text += "尚未進攻的成員有：\n"
                     count = 1
                     for i in data["member_list"]:
                         reply_text += f"{count}. {i['name']}\n"
