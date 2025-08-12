@@ -34,7 +34,7 @@ flex_message = {
                     "height": "sm",
                     "action": {
                         "type": "postback",
-                        "label": "突襲尚未完成名單",
+                        "label": "突襲進攻資訊",
                         "data": "action=Capital_not_end"
                     }
                 },
@@ -44,7 +44,7 @@ flex_message = {
                     "height": "sm",
                     "action": {
                         "type": "postback",
-                        "label": "突襲進攻資訊",
+                        "label": "突襲尚未參與",
                         "data": "action=Capital_not_start"
                     }
                 },
