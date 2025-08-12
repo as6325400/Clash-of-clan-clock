@@ -193,7 +193,7 @@ def handle_message(event: PostbackEvent):
         if res == "action=Capital_not_end":
             data = clan.clan_capital_not_end()
             if data["state"] == "ongoing":
-                reply_text += f"總突襲幣：{data['capitalTotalLoot']}\n"
+                reply_text += f"總首都幣：{data['capitalTotalLoot']}\n"
                 reply_text += f"總攻擊數：{data['totalAttacks']}\n"
                 reply_text += f"突襲 {data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']} 個名額\n"
                 count = 1
