@@ -217,7 +217,7 @@ def handle_message(event: PostbackEvent):
             
             if data["state"] == "ongoing":
                 reply_text += f"突襲 {data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']} 個名額\n"
-                reply_text += "尚未進攻的成員有：\n"
+                reply_text += "尚未進攻的成員：\n"
                 count = 1           
                 for i in data["member_list"]:
                     reply_text += f"{count}. {i['name']}\n"
@@ -242,7 +242,7 @@ def handle_message(event: PostbackEvent):
                 elif data["final"] == 0:
                     reply_text += "平手\n"
                 reply_text += f"{data['ours']['stars']}-{data['theirs']['stars']}\n\n"
-                reply_text += "未進攻的成員有：\n"
+                reply_text += "未進攻的成員：\n"
             elif data["state"] == "inWar":
                 reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 結束\n"
                 reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分 \n\n"
