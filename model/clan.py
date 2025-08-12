@@ -121,12 +121,10 @@ class Clan():
                 time_difference = end_time_utc - current_time_utc
 
                 # 計算剩餘的天數、小時數和分鐘數
-                days_remaining = time_difference.days
-                seconds_remaining = time_difference.seconds
-                hours_remaining, remainder = divmod(seconds_remaining, 3600)
-                minutes_remaining, _ = divmod(remainder, 60)
+                total_seconds = time_difference.total_seconds()
+                hours_remaining = int(total_seconds // 3600)
+                minutes_remaining = int((total_seconds % 3600) // 60)
                 inform["end_time"] = {
-                    "days_remaining": days_remaining,
                     "hours_remaining": hours_remaining,
                     "minutes_remaining": minutes_remaining
                 }
@@ -300,12 +298,10 @@ class Clan():
                 time_difference = end_time_utc - current_time_utc
 
                 # 計算剩餘的天數、小時數和分鐘數
-                days_remaining = time_difference.days
-                seconds_remaining = time_difference.seconds
-                hours_remaining, remainder = divmod(seconds_remaining, 3600)
-                minutes_remaining, _ = divmod(remainder, 60)
+                total_seconds = time_difference.total_seconds()
+                hours_remaining = int(total_seconds // 3600)
+                minutes_remaining = int((total_seconds % 3600) // 60)
                 inform["end_time"] = {
-                    "days_remaining": days_remaining,
                     "hours_remaining": hours_remaining,
                     "minutes_remaining": minutes_remaining
                 }
@@ -362,6 +358,4 @@ class Clan():
                 return None
         except Exception as e:
             sys.stderr.write(f"An unexpected error occurred: {e}\n")
-    
-            
-    
+        
