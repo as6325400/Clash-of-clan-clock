@@ -4,6 +4,7 @@ from datetime import datetime
 import pytz
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 load_dotenv()
 
@@ -16,6 +17,36 @@ class Clan():
             "authorization": f"Bearer {os.getenv('CLASHOFCLAN_TOKEN')}"
         }
     
+    def _parse_time(self, end_time_str):
+        utc = pytz.utc
+        taipei_timezone = pytz.timezone('Asia/Taipei')
+        end_time = datetime.strptime(end_time_str, "%Y%m%dT%H%M%S.%fZ")
+        # 將其轉換為 UTC 時間
+        end_time_utc = end_time.replace(tzinfo=utc)
+
+        # 獲取當前 UTC 時間
+        current_time_utc = datetime.now(utc)
+
+        # 計算時間差
+        time_difference = end_time_utc - current_time_utc
+
+        # 計算剩餘的天數、小時數和分鐘數
+        total_seconds = time_difference.total_seconds()
+        hours_remaining = int(total_seconds // 3600)
+        minutes_remaining = int((total_seconds % 3600) // 60)
+        
+        # 將 end_time 轉換為台北時間
+        end_time_taipei = end_time_utc.astimezone(taipei_timezone)
+        hours_taipei = end_time_taipei.hour
+        minutes_taipei = end_time_taipei.minute
+        
+        return {
+            "hours_remaining": hours_remaining,
+            "minutes_remaining": minutes_remaining,
+            "hours_taipei": hours_taipei,
+            "minutes_taipei": minutes_taipei
+        }
+
     def clan_info(self):
         url = f"{self.base_request_url}{self.tag}"
         inform = {
@@ -116,35 +147,7 @@ class Clan():
                     }
                 }
                 
-                # add end time
-                # 定義 UTC 時區
-                utc = pytz.utc
-                taipei_timezone = pytz.timezone('Asia/Taipei')
-                end_time = datetime.strptime(data['endTime'], "%Y%m%dT%H%M%S.%fZ")
-                # 將其轉換為 UTC 時間
-                end_time_utc = end_time.replace(tzinfo=utc)
-
-                # 獲取當前 UTC 時間
-                current_time_utc = datetime.now(utc)
-
-                # 計算時間差
-                time_difference = end_time_utc - current_time_utc
-
-                # 計算剩餘的天數、小時數和分鐘數
-                total_seconds = time_difference.total_seconds()
-                hours_remaining = int(total_seconds // 3600)
-                minutes_remaining = int((total_seconds % 3600) // 60)
-                inform["end_time"] = {
-                    "hours_remaining": hours_remaining,
-                    "minutes_remaining": minutes_remaining
-                }
-
-                # 將 end_time 轉換為台北時間
-                end_time_taipei = end_time_utc.astimezone(taipei_timezone)
-                hours_taipei = end_time_taipei.hour
-                minutes_taipei = end_time_taipei.minute
-                inform["end_time"]["hours_taipei"] = hours_taipei
-                inform["end_time"]["minutes_taipei"] = minutes_taipei
+                inform["end_time"] = self._parse_time(data['endTime'])
                 
                 # compare the final result
                 
@@ -297,35 +300,7 @@ class Clan():
                 if team_size > 0:
                     inform["max_stars"] = team_size * 3
                 
-                # add end time
-                # 定義 UTC 時區
-                utc = pytz.utc
-                taipei_timezone = pytz.timezone('Asia/Taipei')
-                end_time = datetime.strptime(data['endTime'], "%Y%m%dT%H%M%S.%fZ")
-                # 將其轉換為 UTC 時間
-                end_time_utc = end_time.replace(tzinfo=utc)
-
-                # 獲取當前 UTC 時間
-                current_time_utc = datetime.now(utc)
-
-                # 計算時間差
-                time_difference = end_time_utc - current_time_utc
-
-                # 計算剩餘的天數、小時數和分鐘數
-                total_seconds = time_difference.total_seconds()
-                hours_remaining = int(total_seconds // 3600)
-                minutes_remaining = int((total_seconds % 3600) // 60)
-                inform["end_time"] = {
-                    "hours_remaining": hours_remaining,
-                    "minutes_remaining": minutes_remaining
-                }
-
-                # 將 end_time 轉換為台北時間
-                end_time_taipei = end_time_utc.astimezone(taipei_timezone)
-                hours_taipei = end_time_taipei.hour
-                minutes_taipei = end_time_taipei.minute
-                inform["end_time"]["hours_taipei"] = hours_taipei
-                inform["end_time"]["minutes_taipei"] = minutes_taipei
+                inform["end_time"] = self._parse_time(data['endTime'])
                 
                 # compare the final result
                 if inform["ours"]["stars"] > inform["theirs"]["stars"]:
@@ -385,8 +360,12 @@ class Clan():
             sys.stderr.write(f"An unexpected error occurred: {e}\n")
         
     def get_battle_info(self):
-        war_info = self.clan_war_not_end()
-        cwl_info = self.clan_cwl()
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_war = executor.submit(self.clan_war_not_end)
+            future_cwl = executor.submit(self.clan_cwl)
+
+            war_info = future_war.result()
+            cwl_info = future_cwl.result()
 
         # Priority 1: Active CWL
         if cwl_info and cwl_info.get("state") == "inWar":
@@ -404,4 +383,3 @@ class Clan():
             return war_info
             
         return {"type": "none"}
-        

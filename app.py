@@ -296,7 +296,6 @@ def handle_join(event):
             reply_token = event.reply_token, 
             messages=[TextMessage(text=setting.introduce)]
         ))
-    return 'OK'
 
 scheduler = BackgroundScheduler()
 # 10 minutes
