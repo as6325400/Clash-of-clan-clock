@@ -231,67 +231,61 @@ def handle_message(event: PostbackEvent):
                 messages=[TextMessage(text=reply_text)]
             ))
             
-        elif res == "action=War":
-            data = clan.clan_war_not_end()
-            if data["state"] == "warEnded":
-                reply_text += f"部落戰已於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 結束\n\n"
-                if data["final"] == 1:
-                    reply_text += "勝利\n"
-                elif data["final"] == -1:
-                    reply_text += "失敗\n"
-                elif data["final"] == 0:
-                    reply_text += "平手\n"
-                reply_text += f"{data['ours']['stars']}-{data['theirs']['stars']}\n\n"
-                reply_text += "未進攻的成員：\n"
-            elif data["state"] == "inWar":
-                reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 結束\n"
-                reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分 \n\n"
-                reply_text += f"目前星數：{data['ours']['stars']} - {data['theirs']['stars']}（總星數：{data['max_stars']}）\n\n"
-                reply_text += f"尚未摧毀的村莊：{data['not_three_starred_opponent_members']} 個\n\n"
-                reply_text += "尚未進攻的成員：\n"
-            
-            elif data["state"] == "preparation":
-                reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 開始\n"
-                reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分 \n\n"
-            
-            elif data["state"] == "notInWar":
-                reply_text += "尚未參與部落戰\n"
-            
-            # only in war or war ended to display member list
-            if data["state"] == "warEnded" or data["state"] == "inWar":
-                count = 1
-                for i in data["member_list"]:
-                    reply_text += f"{count}. {i['name']} {i['attack_times']}/2\n"
-                    count += 1
-                
-            line_bot_api.reply_message(ReplyMessageRequest(
-                reply_token = event.reply_token, 
-                messages=[TextMessage(text=reply_text)]
-            ))
-        
-        elif res == "action=Cwl":
-            reply_text += ""
-            data = clan.clan_cwl()
-            print(data)
-            if data == None or data["state"] == "preparation":
-                reply_text += "尚未進行聯賽\n"
-            elif data["state"] == "inWar":
-                reply_text += f"聯賽進行中\n"
-                reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分\n\n"
-                reply_text += f"目前星數：{data['ours']['stars']} - {data['theirs']['stars']}\n\n"
-                if len(data["member_list"]) == 0:
-                    reply_text += "全員皆完成部落聯賽\n"
-                else:
+        elif res == "action=Battle":
+            data = clan.get_battle_info()
+            if data["type"] == "war":
+                if data["state"] == "warEnded":
+                    reply_text += f"部落戰已於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 結束\n\n"
+                    if data["final"] == 1:
+                        reply_text += "勝利\n"
+                    elif data["final"] == -1:
+                        reply_text += "失敗\n"
+                    elif data["final"] == 0:
+                        reply_text += "平手\n"
+                    reply_text += f"{data['ours']['stars']}-{data['theirs']['stars']}\n\n"
+                    reply_text += "未進攻的成員：\n"
+                elif data["state"] == "inWar":
+                    reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 結束\n"
+                    reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分 \n\n"
+                    reply_text += f"目前星數：{data['ours']['stars']} - {data['theirs']['stars']}（總星數：{data['max_stars']}）\n\n"
+                    reply_text += f"尚未摧毀的村莊：{data['not_three_starred_opponent_members']} 個\n\n"
                     reply_text += "尚未進攻的成員：\n"
+                
+                elif data["state"] == "preparation":
+                    reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 開始\n"
+                    reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分 \n\n"
+                
+                if data["state"] == "warEnded" or data["state"] == "inWar":
                     count = 1
                     for i in data["member_list"]:
-                        reply_text += f"{count}. {i['name']}\n"
+                        reply_text += f"{count}. {i['name']} {i['attack_times']}/2\n"
                         count += 1
-                
+            
+            elif data["type"] == "cwl":
+                reply_text += ""
+                if data == None or data["state"] == "preparation":
+                    reply_text += "尚未進行聯賽\n"
+                elif data["state"] == "inWar":
+                    reply_text += f"聯賽進行中\n"
+                    reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分\n\n"
+                    reply_text += f"目前星數：{data['ours']['stars']} - {data['theirs']['stars']}\n\n"
+                    if len(data["member_list"]) == 0:
+                        reply_text += "全員皆完成部落聯賽\n"
+                    else:
+                        reply_text += "尚未進攻的成員：\n"
+                        count = 1
+                        for i in data["member_list"]:
+                            reply_text += f"{count}. {i['name']}\n"
+                            count += 1
+            
+            elif data["type"] == "none":
+                reply_text += "目前沒有部落對戰或聯賽"
+
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text=reply_text)]
             ))
+
     return 'OK'
 
 @handler.add(JoinEvent)

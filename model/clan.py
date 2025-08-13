@@ -384,3 +384,24 @@ class Clan():
         except Exception as e:
             sys.stderr.write(f"An unexpected error occurred: {e}\n")
         
+    def get_battle_info(self):
+        war_info = self.clan_war_not_end()
+        cwl_info = self.clan_cwl()
+
+        # Priority 1: Active CWL
+        if cwl_info and cwl_info.get("state") == "inWar":
+            cwl_info["type"] = "cwl"
+            return cwl_info
+
+        # Priority 2: Active or Preparing War
+        if war_info and war_info.get("state") in ["inWar", "preparation"]:
+            war_info["type"] = "war"
+            return war_info
+
+        # Priority 3: Ended War (if no active CWL or War)
+        if war_info and war_info.get("state") == "warEnded":
+            war_info["type"] = "war"
+            return war_info
+            
+        return {"type": "none"}
+        
