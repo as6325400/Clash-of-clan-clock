@@ -339,6 +339,17 @@ class Clan():
                         inform["final"] = -1
                     else:
                         inform["final"] = 0
+
+                # Calculate how many opponent players have not been 3-starred
+                not_three_starred_opponent_members = 0
+                for member in data["opponent"]["members"]:
+                    # If the member has not been attacked at all, they are not 3-starred
+                    if member.get("opponentAttacks", 0) == 0:
+                        not_three_starred_opponent_members += 1
+                    # If they have been attacked, check if the best attack is less than 3 stars
+                    elif member.get("bestOpponentAttack") and member["bestOpponentAttack"]["stars"] < 3:
+                        not_three_starred_opponent_members += 1
+                inform["not_three_starred_opponent_members"] = not_three_starred_opponent_members
         
                 if data["state"] != "inWar" and data["state"] != "warEnded" and data["state"] != "preparation":
                     return inform
