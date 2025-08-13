@@ -176,7 +176,7 @@ class Clan():
             sys.stderr.write(f"An unexpected error occurred: {e}\n")
                     
             
-    def clan_capital_not_end(self):
+    def clan_capital_info(self):
         url = f"{self.base_request_url}{self.tag}/capitalraidseasons"
         try:
             response = requests.get(url, headers=self.headers)

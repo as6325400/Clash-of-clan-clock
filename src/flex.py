@@ -35,7 +35,7 @@ flex_message = {
                     "action": {
                         "type": "postback",
                         "label": "突襲進攻資訊",
-                        "data": "action=Capital_not_end"
+                        "data": "action=Capital_Info"
                     }
                 },
                 {
