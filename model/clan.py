@@ -300,7 +300,10 @@ class Clan():
                 if team_size > 0:
                     inform["max_stars"] = team_size * 3
                 
-                inform["end_time"] = self._parse_time(data['endTime'])
+                time_key = 'endTime'
+                if data['state'] == 'preparation':
+                    time_key = 'startTime'
+                inform["end_time"] = self._parse_time(data[time_key])
                 
                 # compare the final result
                 if inform["ours"]["stars"] > inform["theirs"]["stars"]:
