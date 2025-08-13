@@ -301,7 +301,12 @@ class Clan():
                 # 定義 UTC 時區
                 utc = pytz.utc
                 taipei_timezone = pytz.timezone('Asia/Taipei')
-                end_time = datetime.strptime(data['endTime'], "%Y%m%dT%H%M%S.%fZ")
+                
+                time_key = 'endTime'
+                if data['state'] == 'preparation':
+                    time_key = 'startTime'
+
+                end_time = datetime.strptime(data[time_key], "%Y%m%dT%H%M%S.%fZ")
                 # 將其轉換為 UTC 時間
                 end_time_utc = end_time.replace(tzinfo=utc)
 
@@ -383,4 +388,3 @@ class Clan():
                 return None
         except Exception as e:
             sys.stderr.write(f"An unexpected error occurred: {e}\n")
-        
