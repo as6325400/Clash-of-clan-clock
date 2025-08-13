@@ -247,7 +247,7 @@ def handle_message(event: PostbackEvent):
                 reply_text += f"部落戰將於台北時間 {data['end_time']['hours_taipei']}:{data['end_time']['minutes_taipei']} 結束\n"
                 reply_text += f"剩餘 {data['end_time']['hours_remaining']} 小時 {data['end_time']['minutes_remaining']} 分 \n\n"
                 reply_text += f"目前星數：{data['ours']['stars']} - {data['theirs']['stars']}（總星數：{data['max_stars']}）\n\n"
-                reply_text += f"對手尚未三星成員：{data['not_three_starred_opponent_members']} 位\n\n"
+                reply_text += f"尚未摧毀的村莊：{data['not_three_starred_opponent_members']} 個\n\n"
                 reply_text += "尚未進攻的成員：\n"
             
             elif data["state"] == "preparation":
