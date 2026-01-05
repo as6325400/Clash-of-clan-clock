@@ -16,7 +16,7 @@ flex_message = {
                     "contents": [
                         {
                             "type": "image",
-                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_001.jpg",
+                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_001.jpg?v=1",
                             "size": "full",
                             "aspectMode": "cover",
                             "aspectRatio": "1:1",
@@ -25,7 +25,7 @@ flex_message = {
                         },
                         {
                             "type": "image",
-                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_002.jpg",
+                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_002.jpg?v=1",
                             "size": "full",
                             "aspectMode": "cover",
                             "aspectRatio": "1:1",
@@ -37,7 +37,7 @@ flex_message = {
                         },
                         {
                             "type": "image",
-                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_003.jpg",
+                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_003.jpg?v=1",
                             "size": "full",
                             "aspectMode": "cover",
                             "aspectRatio": "1:1",
@@ -53,7 +53,7 @@ flex_message = {
                     "contents": [
                         {
                             "type": "image",
-                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_004.jpg",
+                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_004.jpg?v=1",
                             "size": "full",
                             "aspectMode": "cover",
                             "aspectRatio": "1:1",
@@ -62,7 +62,7 @@ flex_message = {
                         },
                         {
                             "type": "image",
-                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_005.jpg",
+                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_005.jpg?v=1",
                             "size": "full",
                             "aspectMode": "cover",
                             "aspectRatio": "1:1",
@@ -74,7 +74,7 @@ flex_message = {
                         },
                         {
                             "type": "image",
-                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_006.jpg",
+                            "url": "https://raw.githubusercontent.com/as6325400/Clash-of-clan-clock/refs/heads/main/src/img/image_part_006.jpg?v=1",
                             "size": "full",
                             "aspectMode": "cover",
                             "aspectRatio": "1:1",
