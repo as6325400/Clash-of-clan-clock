@@ -100,6 +100,29 @@ class Clan():
             response.raise_for_status()
             if(response.status_code == 200):
                 data = response.json()
+                
+                # 先檢查狀態，如果是 notInWar 或 preparation 直接返回基本資訊
+                if data["state"] == "notInWar" or data["state"] == "preparation":
+                    return {
+                        "state": data["state"],
+                        "members": [],
+                        "end_time": {},
+                        "ours": {"stars": 0, "destructionPercentage": 0.0},
+                        "theirs": {"stars": 0, "destructionPercentage": 0.0}
+                    }
+                
+                # 判斷我方部落是 data["clan"] 還是 data["opponent"]
+                our_clan_tag = "#" + self.tag[3:]
+                our_side = None
+                their_side = None
+                
+                if data["clan"]["tag"] == our_clan_tag:
+                    our_side = data["clan"]
+                    their_side = data["opponent"]
+                elif data["opponent"]["tag"] == our_clan_tag:
+                    our_side = data["opponent"]
+                    their_side = data["clan"]
+                
                 inform = {
                     "state": data["state"],
                     "members": [],
@@ -107,12 +130,12 @@ class Clan():
                         
                     },
                     "ours":{
-                        "stars": data["clan"]["stars"],
-                        "destructionPercentage": float(data["clan"]["destructionPercentage"])
+                        "stars": our_side.get("stars", 0) if our_side else 0,
+                        "destructionPercentage": float(our_side.get("destructionPercentage", 0)) if our_side else 0.0
                     },
                     "theirs":{
-                        "stars": data["opponent"]["stars"],
-                        "destructionPercentage": float(data["opponent"]["destructionPercentage"])
+                        "stars": their_side.get("stars", 0) if their_side else 0,
+                        "destructionPercentage": float(their_side.get("destructionPercentage", 0)) if their_side else 0.0
                     }
                 }
                 
@@ -146,20 +169,9 @@ class Clan():
                 inform["end_time"]["hours_taipei"] = hours_taipei
                 inform["end_time"]["minutes_taipei"] = minutes_taipei
                 
-                # compare the final result
-                
-                member = None
-                
-                if data["state"] == "notInWar" or data["state"] == "preparation":
-                    return inform
-                
-                if data["clan"]["tag"] == "#" + self.tag[3:]:
-                    member = data["clan"]["members"]
-                    
-                elif data["opponent"]["tag"] == "#" + self.tag[3:]:
-                    member = data["opponent"]["members"]
-                    
-                if member != None:
+                # 只有找到我方部落時才設定 mapping 並取得成員列表
+                if our_side is not None:
+                    member = our_side.get("members", [])
                     inform["state"] = "mapping"
                     for m in member:
                         inform["members"].append({
@@ -167,7 +179,6 @@ class Clan():
                             "tag": m["tag"],
                             "attack_times": 1 if m.get("attacks") else 0
                         })
-                        # print("m", m)
                 # print("state", data["state"])
                 return inform
             else:
