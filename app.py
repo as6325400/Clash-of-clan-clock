@@ -195,8 +195,15 @@ def handle_message(event: PostbackEvent):
             if data["state"] == "ongoing":
                 reply_text += f"突襲 {data['attack_member_nums']}/50，尚有 {50 - data['attack_member_nums']} 個名額\n\n"
                 reply_text += f"總首都幣：{data['capitalTotalLoot']}\n"
-                reply_text += f"總攻擊數：{data['totalAttacks']}\n\n"
-                reply_text += "尚未完成名單：\n"
+                reply_text += f"總攻擊數：{data['totalAttacks']}\n"
+
+                if "predicted_trophy_change" in data:
+                    change = data['predicted_trophy_change']
+                    change_str = f"+{change}" if change >= 0 else str(change)
+                    reply_text += f"當前獎盃：{data['current_trophies']}\n"
+                    reply_text += f"預估結算：{data['predicted_final_trophies']} ({change_str})\n"
+
+                reply_text += "\n尚未完成名單：\n"
                 
                 count = 1
                 for i in data["member_list"]:
@@ -225,7 +232,7 @@ def handle_message(event: PostbackEvent):
                     
             elif data["state"] == "ended":
                 reply_text += "突襲已結束\n"
-                
+             
             line_bot_api.reply_message(ReplyMessageRequest(
                 reply_token = event.reply_token, 
                 messages=[TextMessage(text=reply_text)]

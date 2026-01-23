@@ -4,6 +4,7 @@ from datetime import datetime
 import pytz
 import os
 import sys
+import math
 
 load_dotenv()
 
@@ -216,6 +217,70 @@ class Clan():
                         "attack_times": int(member["attacks"]),
                         "total_attack_nums": int(member["attackLimit"]) + int(member["bonusAttackLimit"])
                     })
+
+                # Calculate trophy prediction using detailed formula
+                total_loot = data.get("capitalTotalLoot", 0)
+                total_attacks = data.get("totalAttacks", 0)
+                
+                # Calculate avg offense loot per attack
+                avg_offense = total_loot / total_attacks if total_attacks > 0 else 0
+                
+                # Calculate avg defense loot per attack
+                total_defense_loot = 0
+                total_defense_count = 0
+                for defense in data.get("defenseLog", []):
+                    total_defense_count += defense.get("attackCount", 0)
+                    for district in defense.get("districts", []):
+                        total_defense_loot += district.get("totalLooted", 0)
+                
+                avg_defense = total_defense_loot / total_defense_count if total_defense_count > 0 else 0
+                
+                # Calculate x = avg_offense - avg_defense
+                x = avg_offense - avg_defense if (total_attacks > 0 and total_defense_count > 0) else 0
+                
+                # Calculate penalty based on x
+                # penalty = -0.05x + 1400, if x < -736
+                # penalty = -x + 700, if -736 <= x <= 631
+                # penalty = -0.05x + 100, if x > 631
+                if total_attacks > 0 and total_defense_count > 0:
+                    if x < -736:
+                        penalty = -0.05 * x + 1400
+                    elif x > 631:
+                        penalty = -0.05 * x + 100
+                    else:
+                        penalty = -x + 700
+                else:
+                    # Default penalty when no defense data
+                    penalty = 700  # Assume balanced
+                
+                # Performance = 5 × sqrt(Gold + 100000) - 500 - penalty
+                performance = 5 * math.sqrt(total_loot + 100000) - 500 - penalty
+                
+                # Simple offensive trophies for reference
+                offensive_trophies = int(math.sqrt(total_loot + 100000) - 100)
+                inform["offensive_trophies"] = offensive_trophies
+                inform["penalty"] = int(penalty)
+                inform["performance"] = int(performance)
+
+                # Fetch current capital trophies from clan info
+                try:
+                    clan_url = f"{self.base_request_url}{self.tag}"
+                    clan_response = requests.get(clan_url, headers=self.headers)
+                    if clan_response.status_code == 200:
+                        clan_data = clan_response.json()
+                        current_trophies = clan_data.get("clanCapitalPoints", 0)
+                        if current_trophies > 0:
+                            # New trophies = 0.8 × current + 0.2 × performance
+                            predicted_final = int(0.8 * current_trophies + 0.2 * performance)
+                            trophy_change = predicted_final - current_trophies
+                            
+                            inform["current_trophies"] = current_trophies
+                            inform["predicted_final_trophies"] = predicted_final
+                            inform["predicted_trophy_change"] = trophy_change
+                except Exception as e:
+                    # If fetching clan info fails, just skip the final trophy calculation
+                    pass
+
                 return inform
             
             else:
